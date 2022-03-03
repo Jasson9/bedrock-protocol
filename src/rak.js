@@ -188,7 +188,7 @@ class RakJsClient extends EventEmitter {
     if (immediate) this.raknet.connection.sendQueue()
   }
 
-  async ping (timeout = 1000) {
+  async ping (timeout = 5000) {
     if (this.worker) {
       this.worker.postMessage({ type: 'ping' })
       return waitFor(res => {
