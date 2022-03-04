@@ -46,7 +46,7 @@ class RakNativeClient extends EventEmitter {
     })
   }
 
-  async ping (timeout = 5000) {
+  async ping (timeout = 10000) {
     this.raknet.ping()
     return waitFor((done) => {
       this.raknet.on('pong', (ret) => {
@@ -54,7 +54,7 @@ class RakNativeClient extends EventEmitter {
           done(ret.extra.toString())
         }
       })
-    }, timeout, () => { throw new Error('Ping timed out') })
+    }, timeout, () => {console.log(`ping timeout! (reach more than ${timeout})`)})
   }
 
   connect () {
@@ -188,12 +188,12 @@ class RakJsClient extends EventEmitter {
     if (immediate) this.raknet.connection.sendQueue()
   }
 
-  async ping (timeout = 5000) {
+  async ping (timeout =10000) {
     if (this.worker) {
       this.worker.postMessage({ type: 'ping' })
       return waitFor(res => {
         this.pongCb = data => res(data)
-      }, timeout, () => { throw new Error('Ping timed out') })
+      }, timeout, () => {console.log(`ping timeout! (reach more than ${timeout})`)})
     } else {
       if (!this.raknet) this.raknet = new Client(this.options.host, this.options.port)
       return waitFor(res => {
@@ -201,7 +201,7 @@ class RakJsClient extends EventEmitter {
           this.raknet.close()
           res(data)
         })
-      }, timeout, () => { throw new Error('Ping timed out') })
+      }, timeout, () => {console.log(`ping timeout! (reach more than ${timeout})`)})
     }
   }
 }
